@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import sunnyDay from "../images/blue-sky-with-cloud-sunshine-day_1234738-421089.avif";
+import { useWeatherStore } from "../libs/zustand/store";
 
 const Image = () => {
   const daysOfWeek = [
@@ -26,6 +27,8 @@ const Image = () => {
     "December",
   ];
 
+  const temperature = useWeatherStore((state) => state.temperature); // Zustand state access
+
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -50,16 +53,16 @@ const Image = () => {
       className="flex flex-col justify-end h-[50vh] md:h-full w-full md:w-[60%] bg-cover bg-center"
       style={{ backgroundImage: `url(${sunnyDay})` }}
     >
-      <div className="flex flex-row  h-40% md:h-[20%] px-4 py-2 text-white bg-black/50 backdrop-blur-sm">
+      <div className="flex flex-row  h-30% md:h-[20%] px-4 py-2 text-white bg-black/50 backdrop-blur-sm">
         {/* Location and Time */}
-        <div className="flex flex-col w-[60%] justify-center items-start gap-2">
+        <div className="flex flex-col w-[80%] justify-center items-start gap-2">
           <div className="text-lg sm:text-2xl font-semibold">{`${hours}:${minutes}:${seconds}  ${ampm}`}</div>
           <div className="text-xl sm:text-3xl">{`${day}, ${todaysDate} ${month}`}</div>
         </div>
 
         {/* Temperature */}
-        <div className="flex items-end justify-end w-[40%] text-4xl sm:text-5xl">
-          22°
+        <div className="flex items-end justify-end w-[20%] text-4xl sm:text-5xl">
+          {temperature}°
         </div>
       </div>
     </div>
