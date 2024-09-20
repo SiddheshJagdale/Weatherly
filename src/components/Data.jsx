@@ -131,22 +131,22 @@ const Data = () => {
       <div className="text-lg sm:text-2xl lg:text-3xl">{place}</div>
 
       {/* Specifics */}
-      <div className="flex flex-col items-center px-5 h-[60%] w-full gap-5 text-lg sm:text-2xl lg:text-3xl">
-        <div className="flex flex-row w-3/4 justify-between">
+      <div className="flex flex-col items-center px-5 h-[60%] w-full  text-lg sm:text-2xl lg:text-2xl">
+        <div className="flex flex-row w-3/4 justify-between border-b-[1px] border-neutral-600 py-3">
           <p>Temperature</p>
           <span>{temp !== null ? `${temp}°C` : "N/A"}</span>
         </div>
-        <div className="flex flex-row w-3/4 justify-between">
+        <div className="flex flex-row w-3/4 justify-between border-b-[1px] border-neutral-600 py-3">
           <p>Humidity</p>
           <span>{humidity !== null ? `${humidity}%` : "N/A"}</span>
         </div>
-        <div className="flex flex-row w-3/4 justify-between">
+        <div className="flex flex-row w-3/4 justify-between border-b-[1px] border-neutral-600 py-3 ">
           <p>Visibility</p>
-          <span>{visibility !== null ? `${visibility} km` : "N/A"}</span>
+          <span>{visibility !== null ? `${visibility}km` : "N/A"}</span>
         </div>
-        <div className="flex flex-row w-3/4 justify-between">
+        <div className="flex flex-row w-3/4 justify-between border-b-[1px] border-neutral-600 py-3">
           <p>Wind Speed</p>
-          <span>{windSpeed !== null ? `${windSpeed} km/hr` : "N/A"}</span>
+          <span>{windSpeed !== null ? `${windSpeed}km/hr` : "N/A"}</span>
         </div>
       </div>
     </div>
