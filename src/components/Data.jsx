@@ -19,7 +19,7 @@ const Data = () => {
   const [humidity, setHumidity] = useState(null);
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState(""); // Store the user input
   const [cache, setCache] = useState({});
   const apiKey = import.meta.env.VITE_API_KEY;
   const setBackground = useBackgroundStore((state) => state.setBackground);
@@ -35,51 +35,60 @@ const Data = () => {
     });
   });
 
-  const handleInputChange = debounce(async (newValue) => {
+  const handleInputChange = debounce((newValue) => {
     setInputValue(newValue);
+  }, 500); // 500ms debounce delay
+
+  const fetchWeatherData = async (lat, lon) => {
+    const cacheKey = `${lat}-${lon}`;
+
+    if (cache[cacheKey]) {
+      console.log("Using cached data");
+      const cachedData = cache[cacheKey];
+      updateWeatherData(cachedData);
+    } else {
+      try {
+        const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`;
+        const response = await axios.get(weatherApiUrl);
+
+        setCache((prevCache) => ({
+          ...prevCache,
+          [cacheKey]: response.data,
+        }));
+
+        updateWeatherData(response.data);
+      } catch (error) {
+        console.error("Error fetching weather data:", error);
+      }
+    }
+  };
+
+  const handleClick = async () => {
     try {
-      const geocodingApiUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${newValue}&limit=5&appid=${apiKey}`;
+      const geocodingApiUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${inputValue}&limit=5&appid=${apiKey}`;
       const geocodeResponse = await axios.get(geocodingApiUrl);
 
       if (geocodeResponse.data.length > 0) {
-        setLatitude(geocodeResponse.data[0].lat);
-        setLongitude(geocodeResponse.data[0].lon);
+        const lat = geocodeResponse.data[0].lat;
+        const lon = geocodeResponse.data[0].lon;
+
+        setLatitude(lat);
+        setLongitude(lon);
+        fetchWeatherData(lat, lon); // Fetch the weather data for the input location
       } else {
         console.log("Location not found");
       }
     } catch (error) {
       console.error("Error fetching geocoding data:", error);
     }
-  }, 500); // 500ms debounce delay
-
-  const handleClick = async () => {
-    if (latitude && longitude) {
-      const cacheKey = `${latitude}-${longitude}`;
-
-      if (cache[cacheKey]) {
-        console.log("Using cached data");
-        const cachedData = cache[cacheKey];
-        updateWeatherData(cachedData);
-      } else {
-        try {
-          const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`;
-          const response = await axios.get(weatherApiUrl);
-
-          setCache((prevCache) => ({
-            ...prevCache,
-            [cacheKey]: response.data,
-          }));
-
-          updateWeatherData(response.data);
-          return response.data;
-        } catch (error) {
-          console.error("Error fetching weather data:", error);
-        }
-      }
-    } else {
-      console.log("Latitude and Longitude are required.");
-    }
   };
+
+  // Automatically fetch weather data after getting the user's location
+  useEffect(() => {
+    if (latitude && longitude) {
+      fetchWeatherData(latitude, longitude); // Fetch weather data when location is set
+    }
+  }, [latitude, longitude]);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -116,7 +125,7 @@ const Data = () => {
         </div>
       </div>
 
-      {/* Input Field */}
+      {/* Input Field (Optional Search for different location) */}
       <div className="flex flex-row w-full gap-2 justify-center">
         <Input onInputChange={handleInputChange} />
         <button
