@@ -65,7 +65,7 @@ const Data = () => {
 
   const handleClick = async () => {
     try {
-      const geocodingApiUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${inputValue}&limit=5&appid=${apiKey}`;
+      const geocodingApiUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${inputValue}&limit=5&appid=${apiKey}`;
       const geocodeResponse = await axios.get(geocodingApiUrl);
 
       if (geocodeResponse.data.length > 0) {
